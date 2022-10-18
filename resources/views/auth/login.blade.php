@@ -45,7 +45,7 @@
 				@endif
 				<div>Não tem conta? cadastre-se <a href="{{ route('register') }}">aqui</a></div><br>
 				
-                <div class="copy-text">Criado com <i class="fa fa-heart"></i> por LinKn</div>
+                <div class="copy-text">Criado com <i class="fa fa-heart"></i> por Judson Melo Bandeira</div>
 		    </div>
 		    <div class="col-md-8 banner-sec">
                 <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
