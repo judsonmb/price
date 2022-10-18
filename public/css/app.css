@@ -257,7 +257,6 @@ textarea {
   font-family: inherit;
   font-size: inherit;
   line-height: inherit;
-  width: 100%;
 }
 
 button,
@@ -312,6 +311,7 @@ input[type=month] {
 textarea {
   overflow: auto;
   resize: vertical;
+  width: 100%;
 }
 
 fieldset {
