@@ -9,11 +9,10 @@
     "license": "MIT",
     "require": {
         "php": "^7.2.5",
-        "barryvdh/laravel-dompdf": "^0.8.5",
-        "fideloper/proxy": "^4.2",
-        "fruitcake/laravel-cors": "^1.0",
-        "guzzlehttp/guzzle": "^6.3",
-        "laravel/framework": "^7.0",
+        "barryvdh/laravel-dompdf": "^2.0.0",
+        "fruitcake/php-cors": "^1.2.0",
+        "guzzlehttp/guzzle": "^7.5.0",
+        "laravel/framework": "^8.65",
         "laravel/tinker": "^2.0",
         "laravel/ui": "^2.0"
     },
