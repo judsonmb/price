@@ -3,13 +3,18 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-
-use App\Project;
-
+use App\Services\ProjectService;
+use App\Http\Requests\StoreProjectRequest;
+use App\Http\Requests\UpdateProjectRequest;
 use Auth;
 
 class ProjectController extends Controller
 {
+    public function __construct()
+    {
+        $this->service = new ProjectService();
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -17,7 +22,7 @@ class ProjectController extends Controller
      */
     public function index()
     {
-        $projects = Project::with('requirement')->where('user_id', Auth::user()->id)->orderby('created_at')->paginate(20);
+        $projects = $this->service->getUserProjectsList(Auth::user()->id);
         return view('projects', compact('projects'));
     }
 
@@ -37,20 +42,19 @@ class ProjectController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(StoreProjectRequest $request)
     {
-        $this->validate($request, null);
-        $project = new Project();
-        $project->name = $request->name;
-        $project->type = $request->type;
-        $project->user_id = Auth::user()->id;
-        $project->save();
-        return redirect()->route('projects.index')->with('status', 'Projeto criado com sucesso!');
+        try {
+            $this->service->storeProject($request->all());
+            return redirect()->route('projects.index')->with('status', 'Projeto criado com sucesso!');
+        } catch (\Exception $e) {
+            return redirect()->route('home')->with('status', 'Ocorreu um erro interno do servidor');
+        }
     }
 
     public function makeDocument()
     {
-        $projects = Project::with('requirement')->orderby('created_at')->get();
+        $projects = $this->service->getUserProjects(Auth::user()->id);
         return view('projects-makedocument', compact('projects'));
     }
 
@@ -73,8 +77,12 @@ class ProjectController extends Controller
      */
     public function edit($id)
     {
-        $project = Project::find($id);
-        return view('projects-edit', compact('project'));
+        try {
+            $project = $this->service->getProjectById($id);
+            return view('projects-edit', compact('project'));
+        } catch (\Exception $e) {
+            return redirect()->route('home')->with('status', $e->getMessage());
+        }        
     }
 
     /**
@@ -84,14 +92,15 @@ class ProjectController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(UpdateProjectRequest $request, $id)
     {
-        $this->validate($request, $id);
-        $project = Project::find($id);
-        $project->name = $request->name;
-        $project->type = $request->type;
-        $project->save();
-        return redirect()->route('projects.index')->with('status', 'Projeto editado com sucesso!');
+        try {
+            $this->service->updateProject($request->all(), $id);
+            return redirect()->route('projects.index')->with('status', 'Projeto editado com sucesso!');
+        } catch (\Exception $e) {
+            return redirect()->route('home')->with('status', 'Ocorreu um erro interno do servidor');
+        }
+        
     }
 
     /**
@@ -102,15 +111,11 @@ class ProjectController extends Controller
      */
     public function destroy($id)
     {
-        Project::destroy($id);
-        return redirect()->route('projects.index')->with('status', 'Projeto excluído com sucesso!');
-    }
-
-    public function validate(Request $request, $id = null, $rules = null, $messages = null, $customAttributes = null)
-    {
-        $validatedData = $request->validate([
-            'name' => 'required|max:255|unique:projects,name,'.$id,
-            'type' => 'required',
-        ]);
+        try {
+            $this->service->destroyProject($id);
+            return redirect()->route('projects.index')->with('status', 'Projeto excluído com sucesso!');
+        } catch (\Exception $e) {
+            return redirect()->route('home')->with('status', 'Ocorreu um erro interno do servidor');
+        }
     }
 }

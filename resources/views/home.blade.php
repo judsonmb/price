@@ -182,7 +182,7 @@
 					<i class="fa fa-sticky-note"></i>
 				</div>
 				<div class="dbox__body">
-					<span class="dbox__count">{{ $projects->count() }}</span>
+					<span class="dbox__count">{{ $projects->count() ?? 0 }}</span>
 					<span class="dbox__title">Projetos criados</span>
 				</div>
 				
@@ -197,7 +197,7 @@
 					<i class="fa fa-paste"></i>
 				</div>
 				<div class="dbox__body">
-					<span class="dbox__count">{{ $requirements->count() }}</span>
+					<span class="dbox__count">{{ $requirements->count() ?? 0 }}</span>
 					<span class="dbox__title">Requisitos detalhados</span>
 				</div>
 				
@@ -212,7 +212,7 @@
 					<i class="fa fa-dollar"></i>
 				</div>
 				<div class="dbox__body">
-					<span class="dbox__count">{{ $requirements->sum('fp_total_amount') }}</span>
+					<span class="dbox__count">{{ $requirements->sum('fp_total_amount') ?? 0 }}</span>
 					<span class="dbox__title">Pontos de Função analisados</span>
 				</div>
 				
@@ -229,7 +229,7 @@
 					<i class="fa fa-dollar"></i>
 				</div>
 				<div class="dbox__body">
-					<span class="dbox__count">R$ {{ $projects->sum('price') }},00</span>
+					<span class="dbox__count">R$ {{ $projects->sum('price') ?? 0,00 }} </span>
 					<span class="dbox__title">Reais calculados</span>
 				</div>
 				
@@ -244,7 +244,7 @@
 					<i class="fa fa-hourglass-half"></i>
 				</div>
 				<div class="dbox__body">
-					<span class="dbox__count">{{ $projects->sum('hours') }}</span>
+					<span class="dbox__count">{{ $projects->sum('hours') ?? 0 }}</span>
 					<span class="dbox__title">Horas trabalhadas</span>
 				</div>
 				
@@ -259,7 +259,7 @@
 					<i class="fa fa-calendar"></i>
 				</div>
 				<div class="dbox__body">
-					<span class="dbox__count">{{ $projects->sum('hours')/8 }}</span>
+					<span class="dbox__count">{{ $projects->sum('hours')/8 ?? 0 }}</span>
 					<span class="dbox__title">Dias trabalhados</span>
 				</div>
 				
