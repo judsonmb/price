@@ -34,9 +34,9 @@ Route::middleware(['auth'])->group(function () {
 
 	Route::get('requirements/create/{requirement}', 'RequirementController@create')->name('requirements.create');
 
-	Route::get('requirements/{requirement}/editfp', 'RequirementController@editfp')->name('requirements.editfp');
+	Route::get('requirements/{requirement}/editFunctionPoint', 'RequirementController@editFunctionPoint')->name('requirements.editFunctionPoint');
 
-	Route::put('requirements/fp/{requirement}', 'RequirementController@updatefp')->name('requirements.updatefp');
+	Route::put('requirements/fp/{requirement}', 'RequirementController@updateFunctionPoint')->name('requirements.updateFunctionPoint');
 
 	Route::post('export', 'PdfviewController@index')->name('export');
 

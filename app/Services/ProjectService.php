@@ -14,12 +14,12 @@ class ProjectService
 
     public function getUserProjects(int $userId)
     {
-        return $this->model->where('user_id', $userId)->get();
+        return $this->model->where('user_id', $userId)->orderby('created_at')->get();
     }
 
     public function getUserProjectsList(int $userId)
     {
-        return $this->model->with('requirement')->where('user_id', Auth::user()->id)->orderby('created_at')->paginate(20);
+        return $this->model->with('requirement')->where('user_id', $userId)->orderby('created_at')->paginate(20);
     }
 
     public function storeProject(array $data)

@@ -24,12 +24,15 @@
 
                             <div class="col-md-6">
                                 <select class="form-control @error('project_id') is-invalid @enderror" name="project_id">
-                                    <option value="">selecione...</option>
-                                    @foreach($projects as $p)
-                                        <option value="{{ $p->id }}" {{ (old('project_id')==$p->id || $projects->count()==1 ) ? 'selected' : '' }}>{{ $p->name }}</option>
-                                    @endforeach
+                                    @if($projects instanceof \Illuminate\Database\Eloquent\Collection)
+                                        <option value="">selecione...</option>
+                                        @foreach($projects as $p)
+                                            <option value="{{ $p->id }}" {{ (old('project_id')==$p->id || $projects->count()==1 ) ? 'selected' : '' }}>{{ $p->name }}</option>
+                                        @endforeach
+                                    @else
+                                        <option value="{{ $projects->id }}">{{ $projects->name }}</option>
+                                    @endif
                                 </select>    
-
                                 @error('project_id')
                                     <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>

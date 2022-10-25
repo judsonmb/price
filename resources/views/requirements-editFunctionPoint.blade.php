@@ -16,10 +16,10 @@
                 <div class="card-header">
                     Faça uma análise mais profunda do requisito <br>
                     <strong>{{ $requirement->name }}</strong><br>
-                    <textarea id="custom-toolbar-menu-button">{{ $requirement->description }}</textarea>
+                    <textarea readonly class="form-control" rows="5" id="custom-toolbar-menu-button">{{ $requirement->description }}</textarea>
                 </div>
                 <div class="card-body">
-                        <form method="POST" action="{{ route('requirements.updatefp', $requirement->id) }}">
+                        <form method="POST" action="{{ route('requirements.updateFunctionPoint', $requirement->id) }}">
                             @csrf
                             @method('PUT')
                             <div class="form-group">

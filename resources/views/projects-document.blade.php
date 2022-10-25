@@ -94,7 +94,7 @@
                                                            {{ $r->name }} 
 
                                                            ({{ $r->fp_total_amount ?? 'não calculado' }}) 
-                                                            <a href="{{ route('requirements.editfp', $r->id) }}">
+                                                            <a href="{{ route('requirements.editFunctionPoint', $r->id) }}">
                                                                 <button type="button" class="btn btn-warning" title="Fazer análise">
                                                                     <i class="fa fa-sticky-note"></i>
                                                                 </button>

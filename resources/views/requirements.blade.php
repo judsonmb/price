@@ -33,10 +33,10 @@
                                     <td>{{ $r->id }}</td>
                                     <td title="{{ $r->name }}">{{ substr($r->name , 0, 30)}}...</td>
                                     <td>{{ $r->project->name }}</td>
-                                    <td class="text-center">{{ $r->fp_total_amount ?? 'não calculado' }}</td>              
+                                    <td>{{ $r->fp_total_amount ?? 'não calculado' }}</td>              
                                     <td>
                                         <div class="row">
-                                            <a href="{{ route('requirements.editfp', $r->id) }}">
+                                            <a href="{{ route('requirements.editFunctionPoint', $r->id) }}">
                                                     <button type="button" class="btn btn-warning" title="Fazer análise">
                                                         <i class="fa fa-sticky-note"></i>
                                                     </button>

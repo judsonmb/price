@@ -48,7 +48,7 @@ class ProjectController extends Controller
             $this->service->storeProject($request->all());
             return redirect()->route('projects.index')->with('status', 'Projeto criado com sucesso!');
         } catch (\Exception $e) {
-            return redirect()->route('home')->with('status', 'Ocorreu um erro interno do servidor');
+            return redirect()->route('projects.create')->with('status', 'Ocorreu um erro interno do servidor');
         }
     }
 

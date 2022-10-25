@@ -4,14 +4,19 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 
-use App\Requirement;
-
-use App\Project;
-
+use App\Services\RequirementService;
+use App\Services\ProjectService;
+use App\Http\Requests\StoreRequirementRequest;
+use App\Http\Requests\UpdateRequirementRequest;
 use Auth;
 
 class RequirementController extends Controller
 {
+    public function __construct()
+    {
+        $this->service = new RequirementService();
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -19,12 +24,7 @@ class RequirementController extends Controller
      */
     public function index()
     {	
-        $requirements = Requirement::with('project')->whereIn('project_id', function($query){
-			$query->select('id')
-				  ->from('projects')
-				  ->where('user_id', Auth::user()->id);
-		})->orderby('project_id')->orderby('created_at')->paginate(10);
-		
+        $requirements = $this->service->getUserRequirementsPagination(Auth::user()->id);
         return view('requirements', compact('requirements'));
     }
 
@@ -35,7 +35,11 @@ class RequirementController extends Controller
      */
     public function create($id = null)
     {
-        $projects = ($id == null) ? Project::orderBy('created_at')->get() : Project::where('id', $id)->get();
+        if ($id == null) {
+            $projects = (new ProjectService)->getUserProjects(Auth::user()->id);
+        } else {
+            $projects = (new ProjectService)->getProjectById($id);
+        }
         return view('requirements-create', compact('projects'));
     }
 
@@ -45,15 +49,14 @@ class RequirementController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(StoreRequirementRequest $request)
     {
-        $this->validate($request);
-        $requirement = new Requirement();
-        $requirement->name = $request->name;
-        $requirement->description = $request->description;
-        $requirement->project_id = $request->project_id;
-        $requirement->save();
-        return \Redirect::back()->with('status', 'Requisito criado com sucesso!');
+        try {
+            $this->service->storeRequirement($request->all());
+            return \Redirect::back()->with('status', 'Requisito criado com sucesso!');
+        } catch (\Exception $e) {
+            return redirect()->route('requirements.create')->with('status', 'Ocorreu um erro interno do servidor');
+        }        
     }
 
     /**
@@ -75,8 +78,8 @@ class RequirementController extends Controller
      */
     public function edit($id)
     {
-        $requirement = Requirement::with('project')->find($id);
-        $projects = Project::orderBy('name')->get();
+        $requirement = $this->service->getRequirementById($id, Auth::user()->id);
+        $projects = (new ProjectService)->getUserProjects(Auth::user()->id);
         return view('requirements-edit', compact('requirement', 'projects'));
     }
 
@@ -87,319 +90,31 @@ class RequirementController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(UpdateRequirementRequest $request, $id)
     {
-        $requirement = Requirement::find($id);
-        $requirement->name = $request->name;
-        $requirement->description = $request->description;
-        $requirement->project_id = $request->project_id;
-        $requirement->save();
-        return redirect()->route('requirements.index')->with('status', 'Requisito editado com sucesso!');
+        try {
+            $this->service->updateRequirement($request->all(), $id);
+            return redirect()->route('requirements.index')->with('status', 'Requisito editado com sucesso!');
+        } catch (\Exception $e) {
+            return redirect()->route('requirements.index')->with('status', 'Ocorreu um erro interno do servidor');
+        }     
     }
 
-    public function editfp($id){
-        $requirement = Requirement::find($id);
-        return view('requirements-editfp', compact('requirement'));
+    public function editFunctionPoint($id){
+        $requirement = $this->service->getRequirementById($id, Auth::user()->id);
+        return view('requirements-editFunctionPoint', compact('requirement'));
     }
 
-    public function updatefp(Request $request, $id)
+    public function updateFunctionPoint(Request $request, $id)
     {
-        $requirement = Requirement::find($id);
-
-        $requirement->fp_total_amount = 0;
-
-        $requirement->ali_data_type_amount = $request->ali_data_type_amount;
-        $requirement->ali_register_type_amount = $request->ali_register_type_amount;
-        $requirement->ali_justify = $request->ali_justify;
-
-        $requirement->fp_total_amount += $this->calculateAliFpAmount($requirement->ali_data_type_amount, $requirement->ali_register_type_amount);
-
-        $requirement->aie_data_type_amount = $request->aie_data_type_amount;
-        $requirement->aie_register_type_amount = $request->aie_register_type_amount;
-        $requirement->aie_justify = $request->aie_justify;
-
-        $requirement->fp_total_amount += $this->calculateAieFpAmount($requirement->aie_data_type_amount, $requirement->aie_register_type_amount);
-
-        $requirement->ee_data_type_amount = $request->ee_data_type_amount;
-        $requirement->ee_referenced_files_amount = $request->ee_referenced_files_amount;
-        $requirement->ee_justify = $request->ee_justify;
-
-        $requirement->fp_total_amount += $this->calculateEeFpAmount($requirement->ee_data_type_amount, $requirement->ee_referenced_files_amount);
-
-        $requirement->se_data_type_amount = $request->se_data_type_amount;
-        $requirement->se_referenced_files_amount = $request->se_referenced_files_amount;
-        $requirement->se_justify = $request->se_justify;
-
-        $requirement->fp_total_amount += $this->calculateSeFpAmount($requirement->se_data_type_amount, $requirement->se_referenced_files_amount);
-       
-        $requirement->ce_data_type_amount = $request->ce_data_type_amount;
-        $requirement->ce_referenced_files_amount = $request->ce_referenced_files_amount;
-        $requirement->ce_justify = $request->ce_justify;
-
-        $requirement->fp_total_amount += $this->calculateCeFpAmount($requirement->ce_data_type_amount, $requirement->ce_referenced_files_amount);
-
-        $requirement->save();
+        try {
+            $this->service->updateFunctionPoint($request->all(), $id);
+            return redirect()->route('requirements.index')->with('status', 'Pontos de função calculados e atualizados com sucesso!');
+        } catch (\Exception $e) {
+            return redirect()->route('requirements.index')->with('status', 'Ocorreu um erro interno do servidor');
+        }
         
         return redirect()->route('projects.index')->with('status', 'Pontos de função calculados e atualizados com sucesso!');
-    }
-
-    public function calculateAliFpAmount($td, $tr)
-    {
-        if($td == 0 && $tr == 0)
-        {
-            return 0;
-        }
-
-        if($td < 20 && $tr == 1){
-            return 7;
-        }
-
-        if($td < 20 && ($tr >= 2 && $tr <= 5)){
-            return 7;
-        }
-
-        if($td < 20 && $tr > 5){
-            return 10;
-        }
-
-        ///////
-
-        if(($td >= 20 && $td <= 50) && $tr == 1){
-            return 7;
-        }
-
-        if(($td >= 20 && $td <= 50) && ($tr >= 2 && $tr <= 5)){
-            return 10;
-        }
-
-        if(($td >= 20 && $td <= 50) && $tr > 5){
-            return 15;
-        }
-
-        ///////
-
-        if($td > 50 && $tr == 1){
-            return 10;
-        }
-
-        if($td > 50 && ($tr >= 2 && $tr <= 5)){
-            return 15;
-        }
-
-        if($td > 50 && $tr > 5){
-            return 15;
-        }
-
-        return 0;
-
-    }
-
-    public function calculateAieFpAmount($td, $tr)
-    {
-        if($td == 0 && $tr == 0)
-        {
-            return 0;
-        }
-
-        if($td < 20 && $tr == 1){
-            return 5;
-        }
-
-        if($td < 20 && ($tr >= 2 && $tr <= 5)){
-            return 5;
-        }
-
-        if($td < 20 && $tr > 5){
-            return 7;
-        }
-
-        ///////
-
-        if(($td >= 20 && $td <= 50) && $tr == 1){
-            return 5;
-        }
-
-        if(($td >= 20 && $td <= 50) && ($tr >= 2 && $tr <= 5)){
-            return 7;
-        }
-
-        if(($td >= 20 && $td <= 50) && $tr > 5){
-            return 10;
-        }
-
-        ///////
-
-        if($td > 50 && $tr == 1){
-            return 7;
-        }
-
-        if($td > 50 && ($tr >= 2 && $tr <= 5)){
-            return 10;
-        }
-
-        if($td > 50 && $tr > 5){
-            return 10;
-        }
-
-        return 0;
-
-    }
-
-    public function calculateEeFpAmount($td, $tr)
-    {
-        if($td == 0 && $tr == 0)
-        {
-            return 0;
-        }
-
-        if($td < 5 && $tr < 2){
-            return 3;
-        }
-
-        if($td < 5 && $tr == 2){
-            return 3;
-        }
-
-        if($td < 5 && $tr > 2){
-            return 4;
-        }
-
-        ///////
-
-        if(($td >= 5 && $td <= 15) && $tr < 2){
-            return 3;
-        }
-
-        if(($td >= 5 && $td <= 15) && $tr == 2){
-            return 4;
-        }
-
-         if(($td >= 5 && $td <= 15) && $tr > 2){
-            return 6;
-        }
-
-        ///////
-
-        if($td > 15 && $tr < 2){
-            return 4;
-        }
-
-        if($td > 15 && $tr == 2){
-            return 6;
-        }
-
-        if($td > 15 && $tr > 2){
-            return 6;
-        }
-
-        return 0;
-    }
-
-    public function calculateSeFpAmount($td, $tr)
-    {
-        if($td == 0 && $tr == 0)
-        {
-            return 0;
-        }
-
-        if($td < 6 && $tr < 2){
-            return 4;
-        }
-
-        if(($td < 6) && ($tr == 2 || $tr == 3)){
-            return 4;
-        }
-
-        if($td < 6 && $tr > 3){
-            return 5;
-        }
-
-        ///////
-
-        if(($td >= 6 && $td <= 15) && ($tr < 2)){
-            return 4;
-        }
-
-        if(($td >= 6 && $td <= 15) && ($tr == 2 || $tr == 3)){
-            return 5;
-        }
-
-         if(($td >= 6 && $td <= 15) && ($tr > 3)){
-            return 7;
-        }
-
-        ///////
-
-        if($td > 15 && $tr < 2){
-            return 5;
-        }
-
-        if(($td > 15) && ($tr == 2 || $tr == 3)){
-            return 7;
-        }
-
-        if($td > 15 && $tr > 3){
-            return 7;
-        }
-
-        return 0;
-    }
-
-    public function calculateCeFpAmount($td, $tr)
-    {
-       if($td == 0 && $tr == 0)
-        {
-            return 0;
-        }
-
-       if($td < 6 && $tr < 2)
-        {
-            return 3;
-        }
-
-        if(($td < 6) && ($tr == 2 || $tr == 3))
-        {
-            return 3;
-        }
-
-        if($td < 6 && $tr > 3)
-        {
-            return 4;
-        }
-
-        ///////
-
-        if(($td >= 6 && $td <= 15) && $tr < 2)
-        {
-            return 3;
-        }
-
-        if(($td >= 6 && $td <= 15) && ($tr == 2 || $tr == 3))
-        {  
-            return 4;
-        }
-
-        if(($td >= 6 && $td <= 15) && $tr > 3){
-            return 6;
-        }
-
-        ///////
-
-        if($td > 15 && $tr < 2){
-            return 4;
-        }
-
-        if($td > 15 && ($tr == 2 || $tr == 3))
-        {
-            return 6;
-        }
-
-        if($td > 15 && $tr > 3)
-        {
-            return 6;
-        }
-
-        return 0;
     }
 
     /**
@@ -410,22 +125,11 @@ class RequirementController extends Controller
      */
     public function destroy($id)
     {
-        Requirement::destroy($id);
-        return redirect()->route('requirements.index')->with('status', 'Requisito excluído com sucesso!');
+        try {
+            $this->service->destroyRequirement($id);
+            return redirect()->route('requirements.index')->with('status', 'Requisito excluído com sucesso!');
+        } catch (\Exception $e) {
+            return redirect()->route('home')->with('status', 'Ocorreu um erro interno do servidor');
+        }
     }
-
-    public function validate(Request $request, $id = null, $rules = null, $messages = null, $customAttributes = null)
-    {
-        $validatedData = $request->validate([
-            'name' => 'required|unique:projects|max:255',
-            'description' => 'required',
-            'project_id' => 'required',
-            'ali_justify' => 'max:255',
-            'aie_justify' => 'max:255',
-            'ee_justify' => 'max:255',
-            'se_justify' => 'max:255',
-            'ce_justify' => 'max:255',
-        ]);
-    }
-
 }
