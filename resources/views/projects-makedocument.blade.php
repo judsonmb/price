@@ -25,14 +25,12 @@
                     <button type='submit' class='btn btn-primary'>Exportar</button> 
                 </div> 
                 <div class="card-body">
-                    
-                   
                     <ul class="list-group"> 
                         @foreach($projects as $p)
                             <li class="list-group-item">
                                 <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" value="{{ $p->id }}" name="p{{ $p->id }}" id="pid{{ $p->id }}">
-                                    <label class="form-check-label" for="p{{ $p->id }}">
+                                    <input class="form-check-input" type="checkbox" value="{{ $p->id }}" name="{{ $p->id }}" id="pid{{ $p->id }}">
+                                    <label class="form-check-label" for="{{ $p->id }}">
                                         {{ $p->name }}
                                     </label>
                                 </div>                           

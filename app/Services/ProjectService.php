@@ -3,7 +3,6 @@
 namespace App\Services;
 
 use App\Project;
-use Auth;
 
 class ProjectService
 {

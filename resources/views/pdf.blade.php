@@ -22,18 +22,22 @@
     <ul class="list-group">
       <li class="list-group-item active">
         <strong>{{ $p->name }}</strong><br>
-        <ul class="list-group">
-	  	@foreach($p->requirement as $r)
-  				<li class="list-group-item"><strong>Título</strong>: {{ $r->name }}<br>
-  				<small><strong>Descrição</strong>: {{ $r->description }}</small><br>
-          <small><strong>Arquivos lógicos internos (mudanças no banco de dados)</strong>: {{ $r->ali_justify }}</small><br>
-          <small><strong>Arquivos de interface externa (mudanças no banco de dados de outra aplicação)</strong>: {{ $r->aie_justify }}</small><br>
-  				<small><strong>Entradas Externas (mudanças em registros no banco de dados)</strong>: {{ $r->ee_justify }}</small><br>
-          <small><strong>Saídas Externas (consultas com processamento no banco de dados)</strong>: {{ $r->se_justify }}</small><br>
-          <small><strong>Consultas Externas (consultas sem processamento no banco de dados)</strong>: {{ $r->ce_justify }}</small><br>
-          <strong>Total: {{ $r->fp_total_amount }} PF</strong></li><br><br>
-		@endforeach
-        </ul>
+        @if(count($p->requirement))
+          <ul class="list-group">
+            @foreach($p->requirement as $r)
+                <li class="list-group-item"><strong>Título</strong>: {{ $r->name }}<br>
+                <small><strong>Descrição</strong>: {{ $r->description }}</small><br>
+                <small><strong>Arquivos lógicos internos (mudanças no banco de dados)</strong>: {{ $r->ali_justify ?? 'Sem justificativa' }}</small><br>
+                <small><strong>Arquivos de interface externa (mudanças no banco de dados de outra aplicação)</strong>: {{ $r->aie_justify ?? 'Sem justificativa' }}</small><br>
+                <small><strong>Entradas Externas (mudanças em registros no banco de dados)</strong>: {{ $r->ee_justify ?? 'Sem justificativa' }}</small><br>
+                <small><strong>Saídas Externas (consultas com processamento no banco de dados)</strong>: {{ $r->se_justify ?? 'Sem justificativa'}}</small><br>
+                <small><strong>Consultas Externas (consultas sem processamento no banco de dados)</strong>: {{ $r->ce_justify ?? 'Sem justificativa' }}</small><br>
+                <strong>Total: {{ $r->fp_total_amount ?? 0 }} PF</strong></li><br><br>
+            @endforeach
+          </ul>
+        @else
+          Sem requisitos cadastrados.
+        @endif
         <br>
       </li>
     </ul>
