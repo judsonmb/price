@@ -22,9 +22,9 @@
     <ul class="list-group">
       <li class="list-group-item active">
         <strong>{{ $p->name }}</strong><br>
-        @if(count($p->requirement))
+        @if(count($p->task))
           <ul class="list-group">
-            @foreach($p->requirement as $r)
+            @foreach($p->task as $r)
                 <li class="list-group-item"><strong>Título</strong>: {{ $r->name }}<br>
                 <small><strong>Descrição</strong>: {{ $r->description }}</small><br>
                 <small><strong>Arquivos lógicos internos (mudanças no banco de dados)</strong>: {{ $r->ali_justify ?? 'Sem justificativa' }}</small><br>
@@ -36,7 +36,7 @@
             @endforeach
           </ul>
         @else
-          Sem requisitos cadastrados.
+          Sem tarefas cadastrados.
         @endif
         <br>
       </li>

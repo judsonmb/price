@@ -2,90 +2,92 @@
 
 namespace App\Services;
 
-use App\Requirement;
+use App\Task;
 
-class RequirementService
+class TaskService
 {
     public function __construct()
     {
-        $this->model = new Requirement();
+        $this->model = new Task();
     }
 
-    public function getUserRequirements(int $userId)
+    public function getUserTasks(int $userId)
     {
         return $this->model->whereHas('project', function($query) use ($userId){
 			$query->where('user_id', $userId);
 		})->get();
     }
 
-    public function getUserRequirementsPagination(int $userId)
+    public function getUserTasksPagination(int $userId)
     {
         return $this->model->whereHas('project', function($query) use ($userId){
 			$query->where('user_id', $userId);
 		})->orderby('project_id')->orderby('created_at')->paginate(10);
     }
 
-    public function storeRequirement(array $data) 
+    public function storeTask(array $data) 
     {
         $this->model->name = $data['name'];
         $this->model->description = $data['description'];
+        $this->model->type = $data['type'];
         $this->model->project_id = $data['project_id'];
         return $this->model->save();
     }
 
-    public function getRequirementById(int $id, int $userId) 
+    public function getTaskById(int $id, int $userId) 
     {
         return $this->model->where('id', $id)->with('project', function($query) use ($userId){
             $query->where('user_id', $userId);
         })->first();
     }
 
-    public function updateRequirement(array $data, $id) 
+    public function updateTask(array $data, $id) 
     {
-        $requirement = $this->model->find($id);
-        $requirement->name = $data['name'];
-        $requirement->description = $data['description'];
-        $requirement->project_id = $data['project_id'];
-        return $requirement->save();
+        $task = $this->model->find($id);
+        $task->name = $data['name'];
+        $task->description = $data['description'];
+        $task->type = $data['type'];
+        $task->project_id = $data['project_id'];
+        return $task->save();
     }
 
     public function updateFunctionPoint(array $data, $id) 
     {
-        $requirement = $this->model->find($id);
+        $task = $this->model->find($id);
 
-        $requirement->fp_total_amount = 0;
+        $task->fp_total_amount = 0;
 
-        $requirement->ali_data_type_amount = $data['ali_data_type_amount'];
-        $requirement->ali_register_type_amount = $data['ali_register_type_amount'];
-        $requirement->ali_justify = $data['ali_justify'];
+        $task->ali_data_type_amount = $data['ali_data_type_amount'];
+        $task->ali_register_type_amount = $data['ali_register_type_amount'];
+        $task->ali_justify = $data['ali_justify'];
 
-        $requirement->fp_total_amount += $this->calculateAliFpAmount($requirement->ali_data_type_amount, $requirement->ali_register_type_amount);
+        $task->fp_total_amount += $this->calculateAliFpAmount($task->ali_data_type_amount, $task->ali_register_type_amount);
 
-        $requirement->aie_data_type_amount = $data['aie_data_type_amount'];
-        $requirement->aie_register_type_amount = $data['aie_register_type_amount'];
-        $requirement->aie_justify = $data['aie_justify'];
+        $task->aie_data_type_amount = $data['aie_data_type_amount'];
+        $task->aie_register_type_amount = $data['aie_register_type_amount'];
+        $task->aie_justify = $data['aie_justify'];
 
-        $requirement->fp_total_amount += $this->calculateAieFpAmount($requirement->aie_data_type_amount, $requirement->aie_register_type_amount);
+        $task->fp_total_amount += $this->calculateAieFpAmount($task->aie_data_type_amount, $task->aie_register_type_amount);
 
-        $requirement->ee_data_type_amount = $data['ee_data_type_amount'];
-        $requirement->ee_referenced_files_amount = $data['ee_referenced_files_amount'];
-        $requirement->ee_justify = $data['ee_justify'];
+        $task->ee_data_type_amount = $data['ee_data_type_amount'];
+        $task->ee_referenced_files_amount = $data['ee_referenced_files_amount'];
+        $task->ee_justify = $data['ee_justify'];
 
-        $requirement->fp_total_amount += $this->calculateEeFpAmount($requirement->ee_data_type_amount, $requirement->ee_referenced_files_amount);
+        $task->fp_total_amount += $this->calculateEeFpAmount($task->ee_data_type_amount, $task->ee_referenced_files_amount);
 
-        $requirement->se_data_type_amount = $data['se_data_type_amount'];
-        $requirement->se_referenced_files_amount = $data['se_referenced_files_amount'];
-        $requirement->se_justify = $data['se_justify'];
+        $task->se_data_type_amount = $data['se_data_type_amount'];
+        $task->se_referenced_files_amount = $data['se_referenced_files_amount'];
+        $task->se_justify = $data['se_justify'];
 
-        $requirement->fp_total_amount += $this->calculateSeFpAmount($requirement->se_data_type_amount, $requirement->se_referenced_files_amount);
+        $task->fp_total_amount += $this->calculateSeFpAmount($task->se_data_type_amount, $task->se_referenced_files_amount);
        
-        $requirement->ce_data_type_amount = $data['ce_data_type_amount'];
-        $requirement->ce_referenced_files_amount = $data['ce_referenced_files_amount'];
-        $requirement->ce_justify = $data['ce_justify'];
+        $task->ce_data_type_amount = $data['ce_data_type_amount'];
+        $task->ce_referenced_files_amount = $data['ce_referenced_files_amount'];
+        $task->ce_justify = $data['ce_justify'];
 
-        $requirement->fp_total_amount += $this->calculateCeFpAmount($requirement->ce_data_type_amount, $requirement->ce_referenced_files_amount);
+        $task->fp_total_amount += $this->calculateCeFpAmount($task->ce_data_type_amount, $task->ce_referenced_files_amount);
 
-        return $requirement->save();
+        return $task->save();
     }
 
     public function calculateAliFpAmount($td, $tr)
@@ -347,7 +349,7 @@ class RequirementService
         return 0;
     }
 
-    public function destroyRequirement($id)
+    public function destroyTask($id)
     {
         return $this->model->destroy($id);
     }

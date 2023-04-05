@@ -9,7 +9,7 @@ class PdfViewService
 {
     public function getPDF(array $projects)
     {    	
-		$projects = Project::whereIn('id', array_keys($projects))->with('requirement')->get();
+		$projects = Project::whereIn('id', array_keys($projects))->with('task')->get();
     	return PDF::loadView('pdf', compact('projects'));
     }
 }

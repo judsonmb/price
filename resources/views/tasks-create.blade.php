@@ -3,33 +3,36 @@
 @section('content')
 <div class="container">
     <div class="row justify-content-center">
-       <div class="col-md-12">
+        <div class="col-md-12">
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item"><a href="/home">Home</a></li>
-                    <li class="breadcrumb-item"><a href="{{ route('requirements.index') }}">Requisitos</a></li>
-                    <li class="breadcrumb-item"><a href="{{ route('requirements.index') }}" title="{{ $requirement->name }}">{{ substr($requirement->name , 0, 10)}}...</a></li>
-                    <li class="breadcrumb-item active" aria-current="page">Editar</li>
+                    <li class="breadcrumb-item"><a href="{{ route('tasks.index') }}">Tarefas</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Novo</li>
                 </ol>
             </nav>
             <div class="card">
                 <div class="card-header">
-                    Edite o requisito <strong>{{ $requirement->name }}</strong>
+                    Crie um nova tarefa
                 </div>
                 <div class="card-body">
-                    <form method="POST" action="{{ route('requirements.update', $requirement->id) }}">
+                    <form method="POST" action="{{ route('tasks.store') }}">
                         @csrf
-                        @method('PUT')
+
                          <div class="form-group row">
                             <label for="tipo" class="col-md-4 col-form-label text-md-right">{{ __('Projeto') }}</label>
 
                             <div class="col-md-6">
                                 <select class="form-control @error('project_id') is-invalid @enderror" name="project_id">
-                                    @foreach($projects as $p)
-                                        <option value="{{ $p->id }}" {{ (old('project_id') or $requirement->project->id==$p->id) ? 'selected' : '' }}>{{ $p->name }}</option>
-                                    @endforeach
+                                    @if($projects instanceof \Illuminate\Database\Eloquent\Collection)
+                                        <option value="">selecione...</option>
+                                        @foreach($projects as $p)
+                                            <option value="{{ $p->id }}" {{ (old('project_id')==$p->id || $projects->count()==1 ) ? 'selected' : '' }}>{{ $p->name }}</option>
+                                        @endforeach
+                                    @else
+                                        <option value="{{ $projects->id }}">{{ $projects->name }}</option>
+                                    @endif
                                 </select>    
-
                                 @error('project_id')
                                     <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>
@@ -43,9 +46,29 @@
                             <label for="name" class="col-md-4 col-form-label text-md-right">{{ __('Nome') }}</label>
 
                             <div class="col-md-6">
-                                <input id="name" type="text" class="form-control @error('name') is-invalid @enderror" name="name" value="{{ old('name') ?? $requirement->name }}" required autocomplete="name" autofocus>
+                                <input id="name" type="text" class="form-control @error('name') is-invalid @enderror" name="name" value="{{ old('name') }}" required autocomplete="name" autofocus>
 
                                 @error('name')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                @enderror
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label for="tipo" class="col-md-4 col-form-label text-md-right">{{ __('Tipo') }}</label>
+
+                            <div class="col-md-6">
+                                <select class="form-control @error('type') is-invalid @enderror" name="type">
+                                    <option value="">selecione...</option>
+                                    <option value="BUG" {{ old('type') == 'BUG' ? 'selected' : '' }}>BUG</option>
+                                    <option value="AJUSTE" {{ old('type') == 'AJUSTE' ? 'selected' : '' }}>AJUSTE</option>
+                                    <option value="FEATURE" {{ old('type') == 'FEATURE' ? 'selected' : '' }}>FEATURE</option>
+                                    <option value="OPERACIONAL" {{ old('type') == 'OPERACIONAL' ? 'selected' : '' }}>OPERACIONAL</option>
+                                </select>    
+
+                                @error('type')
                                     <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>
                                     </span>
@@ -57,7 +80,7 @@
                             <label for="name" class="col-md-4 col-form-label text-md-right">{{ __('Descrição') }}</label>
 
                             <div class="col-md-6">
-                                <textarea id="custom-toolbar-menu-button" class="form-control @error('name') is-invalid @enderror" rows='10' name="description">{{ old('description') ?? $requirement->description }}</textarea>
+                                <textarea id="custom-toolbar-menu-button" class="form-control @error('description') is-invalid @enderror" rows='10' name="description">{{ old('description') }}</textarea>
 
                                 @error('description')
                                     <span class="invalid-feedback" role="alert">
@@ -70,9 +93,9 @@
                         <div class="form-group row mb-0">
                             <div class="col-md-6 offset-md-4">
                                 <button type="submit" class="btn btn-primary">
-                                    {{ __('Editar') }}
+                                    {{ __('Criar') }}
                                 </button>
-                                <a href="{{ route('projects.index') }}">
+                                 <a href="{{ route('tasks.index') }}">
                                     <button type="button" class="btn btn-secondary">
                                         {{ __('Voltar') }}
                                     </button>

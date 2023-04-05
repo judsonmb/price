@@ -40,8 +40,8 @@
 				<li class="nav-item {{ request()->routeIs('projects.*')? 'active' : '' }}">
 					<a class="nav-link" href="{{ route('projects.index') }}">Projetos</a>
 				</li> 
-				<li class="nav-item {{ request()->routeIs('requirements.*')? 'active' : '' }}">
-					<a class="nav-link" href="{{ route('requirements.index') }}">Requisitos</a>
+				<li class="nav-item {{ request()->routeIs('tasks.*')? 'active' : '' }}">
+					<a class="nav-link" href="{{ route('tasks.index') }}">Tarefas</a>
 				</li>
 				<li class="nav-item">
 					<a class="nav-link" href="#">Precificar</a>

@@ -12,14 +12,14 @@ class Project extends Model
      * @var array
      */
     protected $fillable = [
-        'name', 'user_id', 'type'
+        'name', 'user_id'
     ];
 
     public function user(){
         return $this->belongsTo('App\User');
     }
 
-    public function requirement(){
-        return $this->hasMany('App\Requirement');
+    public function task(){
+        return $this->hasMany('App\Task');
     }
 }

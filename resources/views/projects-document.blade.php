@@ -26,7 +26,7 @@
                             <tr>
                                 <th scope="col">Nome</th>
                                 <th scope="col">Tipo</th>
-                                <th scope="col" class="text-center">Requisitos</th>
+                                <th scope="col" class="text-center">Tarefas</th>
                                 <th scope="col" class="text-center">Total de P.F.</th>
                                 <th scope="col">Valor</th>
                                 <th scope="col">Ações</th>
@@ -37,8 +37,8 @@
                                 <tr>
                                     <td>{{ $p->name }}</td>
                                     <td>{{ $p->type }}</td>
-                                    <td class="text-center">{{ $p->requirement->count() }}</td>
-                                    <td class="text-center">{{ $p->requirement->sum('fp_total_amount') }}</td>
+                                    <td class="text-center">{{ $p->task->count() }}</td>
+                                    <td class="text-center">{{ $p->task->sum('fp_total_amount') }}</td>
                                     <td>R$ {{ $p->price }},00</td>
                                     <td>
                                         <div class="row">
@@ -48,12 +48,12 @@
                                                 </button>
                                             </a>
                                             <a href="#">
-                                                <button type="button" class="btn btn-secondary" title="Ver requisitos" data-toggle="modal" data-target="#requisitosProject{{ $p->id }}">
+                                                <button type="button" class="btn btn-secondary" title="Ver tarefas" data-toggle="modal" data-target="#tarefasProject{{ $p->id }}">
                                                     <i class="fa fa-eye"></i>
                                                 </button>
                                             </a>
-                                            <a href="{{ route('requirements.create', $p->id) }}">
-                                                <button type="button" class="btn btn-success" title="Novo requisito">
+                                            <a href="{{ route('tasks.create', $p->id) }}">
+                                                <button type="button" class="btn btn-success" title="Nova tarefa">
                                                     <i class="fa fa-plus"></i>
                                                 </button>
                                             </a>
@@ -70,12 +70,12 @@
                                         </div>
                                     </td>
                                 </tr>
-                                <div class="modal fade" id="requisitosProject{{ $p->id }}" tabindex="-1" role="dialog" aria-hidden="true">
+                                <div class="modal fade" id="tarefasProject{{ $p->id }}" tabindex="-1" role="dialog" aria-hidden="true">
                                     <div class="modal-dialog" role="document">
                                         <div class="modal-content">
                                             <div class="modal-header">
                                                 <strong>
-                                                    <h5 class="modal-title" id="exampleModalLabel">Requisitos do projeto<br>{{ $p->name }}</h5>
+                                                    <h5 class="modal-title" id="exampleModalLabel">Tarefas do projeto<br>{{ $p->name }}</h5>
                                                 </strong>
                                                 <button type="button" class="close" data-dismiss="modal" aria-label="Fechar">
                                                     <span aria-hidden="true">&times;</span>
@@ -84,7 +84,7 @@
                                             </div>
                                             <div class="modal-body">
                                                 <ul class="list-group">
-                                                    @foreach($p->requirement as $r)
+                                                    @foreach($p->task as $r)
 
                                                         @if(isset($r->fp_total_amount))
                                                             <li class="list-group-item d-flex justify-content-between align-items-center text-justify" style="background-color:#2ecc71;">
@@ -94,7 +94,7 @@
                                                            {{ $r->name }} 
 
                                                            ({{ $r->fp_total_amount ?? 'não calculado' }}) 
-                                                            <a href="{{ route('requirements.editFunctionPoint', $r->id) }}">
+                                                            <a href="{{ route('tasks.editFunctionPoint', $r->id) }}">
                                                                 <button type="button" class="btn btn-warning" title="Fazer análise">
                                                                     <i class="fa fa-sticky-note"></i>
                                                                 </button>

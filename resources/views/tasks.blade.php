@@ -7,12 +7,12 @@
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item"><a href="/home">Home</a></li>
-                    <li class="breadcrumb-item active" aria-current="page">Requisitos</li>
+                    <li class="breadcrumb-item active" aria-current="page">Tarefas</li>
                 </ol>
             </nav>
             <div class="card">
                 <div class="card-header">
-                    <a href="/requirements/create/">
+                    <a href="/tasks/create/">
                         <button type="button" class="btn btn-success">Novo</button>
                     </a>
                 </div> 
@@ -28,7 +28,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach($requirements as $r)
+                            @foreach($tasks as $r)
                                 <tr>
                                     <td>{{ $r->id }}</td>
                                     <td title="{{ $r->name }}">{{ substr($r->name , 0, 30)}}...</td>
@@ -36,20 +36,20 @@
                                     <td>{{ $r->fp_total_amount ?? 'não calculado' }}</td>              
                                     <td>
                                         <div class="row">
-                                            <a href="{{ route('requirements.editFunctionPoint', $r->id) }}">
+                                            <a href="{{ route('tasks.editFunctionPoint', $r->id) }}">
                                                     <button type="button" class="btn btn-warning" title="Fazer análise">
                                                         <i class="fa fa-sticky-note"></i>
                                                     </button>
                                             </a>
-                                            <a href="{{ route('requirements.edit', $r->id) }}">
+                                            <a href="{{ route('tasks.edit', $r->id) }}">
                                                     <button type="button" class="btn btn-primary" title="Editar">
                                                         <i class="fa fa-pencil"></i>
                                                     </button>
                                             </a>
-                                            <form action="{{ route('requirements.destroy', $r->id) }}" method="POST">
+                                            <form action="{{ route('tasks.destroy', $r->id) }}" method="POST">
                                                 @csrf
                                                 @method('DELETE')
-                                                <button type="submit" class="btn btn-xs btn-danger" title="Excluir" onclick="return confirm('Você tem certeza que deseja excluir este requisito?')"><i class="fa fa-trash"></i></button>
+                                                <button type="submit" class="btn btn-xs btn-danger" title="Excluir" onclick="return confirm('Você tem certeza que deseja excluir este tarefa?')"><i class="fa fa-trash"></i></button>
                                             </form>
                                         </div>
                                     </td>
@@ -59,7 +59,7 @@
                     </table>
                 </div>
                 <div class="card-footer">
-                    {{ $requirements->links() }}
+                    {{ $tasks->links() }}
                 </div>
             </div>
         </div>

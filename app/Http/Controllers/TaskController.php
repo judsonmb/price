@@ -4,17 +4,17 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 
-use App\Services\RequirementService;
+use App\Services\TaskService;
 use App\Services\ProjectService;
-use App\Http\Requests\StoreRequirementRequest;
-use App\Http\Requests\UpdateRequirementRequest;
+use App\Http\Requests\StoreTaskRequest;
+use App\Http\Requests\UpdateTaskRequest;
 use Auth;
 
-class RequirementController extends Controller
+class TaskController extends Controller
 {
     public function __construct()
     {
-        $this->service = new RequirementService();
+        $this->service = new TaskService();
     }
 
     /**
@@ -24,8 +24,8 @@ class RequirementController extends Controller
      */
     public function index()
     {	
-        $requirements = $this->service->getUserRequirementsPagination(Auth::user()->id);
-        return view('requirements', compact('requirements'));
+        $tasks = $this->service->getUserTasksPagination(Auth::user()->id);
+        return view('tasks', compact('tasks'));
     }
 
     /**
@@ -40,7 +40,7 @@ class RequirementController extends Controller
         } else {
             $projects = (new ProjectService)->getProjectById($id);
         }
-        return view('requirements-create', compact('projects'));
+        return view('tasks-create', compact('projects'));
     }
 
     /**
@@ -49,13 +49,13 @@ class RequirementController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(StoreRequirementRequest $request)
+    public function store(StoreTaskRequest $request)
     {
         try {
-            $this->service->storeRequirement($request->all());
-            return \Redirect::back()->with('status', 'Requisito criado com sucesso!');
+            $this->service->storeTask($request->all());
+            return \Redirect::back()->with('status', 'Tarefa criada com sucesso!');
         } catch (\Exception $e) {
-            return redirect()->route('requirements.create')->with('status', 'Ocorreu um erro interno do servidor');
+            return redirect()->route('tasks.create')->with('status', 'Ocorreu um erro interno do servidor');
         }        
     }
 
@@ -78,9 +78,9 @@ class RequirementController extends Controller
      */
     public function edit($id)
     {
-        $requirement = $this->service->getRequirementById($id, Auth::user()->id);
+        $task = $this->service->getTaskById($id, Auth::user()->id);
         $projects = (new ProjectService)->getUserProjects(Auth::user()->id);
-        return view('requirements-edit', compact('requirement', 'projects'));
+        return view('tasks-edit', compact('task', 'projects'));
     }
 
     /**
@@ -90,28 +90,28 @@ class RequirementController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(UpdateRequirementRequest $request, $id)
+    public function update(UpdateTaskRequest $request, $id)
     {
         try {
-            $this->service->updateRequirement($request->all(), $id);
-            return redirect()->route('requirements.index')->with('status', 'Requisito editado com sucesso!');
+            $this->service->updateTask($request->all(), $id);
+            return redirect()->route('tasks.index')->with('status', 'Tarefa editado com sucesso!');
         } catch (\Exception $e) {
-            return redirect()->route('requirements.index')->with('status', 'Ocorreu um erro interno do servidor');
+            return redirect()->route('tasks.index')->with('status', 'Ocorreu um erro interno do servidor');
         }     
     }
 
     public function editFunctionPoint($id){
-        $requirement = $this->service->getRequirementById($id, Auth::user()->id);
-        return view('requirements-editFunctionPoint', compact('requirement'));
+        $task = $this->service->getTaskById($id, Auth::user()->id);
+        return view('tasks-editFunctionPoint', compact('task'));
     }
 
     public function updateFunctionPoint(Request $request, $id)
     {
         try {
             $this->service->updateFunctionPoint($request->all(), $id);
-            return redirect()->route('requirements.index')->with('status', 'Pontos de função calculados e atualizados com sucesso!');
+            return redirect()->route('tasks.index')->with('status', 'Pontos de função calculados e atualizados com sucesso!');
         } catch (\Exception $e) {
-            return redirect()->route('requirements.index')->with('status', 'Ocorreu um erro interno do servidor');
+            return redirect()->route('tasks.index')->with('status', 'Ocorreu um erro interno do servidor');
         }
         
         return redirect()->route('projects.index')->with('status', 'Pontos de função calculados e atualizados com sucesso!');
@@ -126,8 +126,8 @@ class RequirementController extends Controller
     public function destroy($id)
     {
         try {
-            $this->service->destroyRequirement($id);
-            return redirect()->route('requirements.index')->with('status', 'Requisito excluído com sucesso!');
+            $this->service->destroyTask($id);
+            return redirect()->route('tasks.index')->with('status', 'Tarefa excluído com sucesso!');
         } catch (\Exception $e) {
             return redirect()->route('home')->with('status', 'Ocorreu um erro interno do servidor');
         }

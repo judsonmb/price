@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateRequirementsTable extends Migration
+class CreateTasksTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,10 +13,11 @@ class CreateRequirementsTable extends Migration
      */
     public function up()
     {
-        Schema::create('requirements', function (Blueprint $table) {
+        Schema::create('tasks', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('name');
-            $table->text('description');
+            $table->enum('type', ['BUG', 'AJUSTE', 'FEATURE', 'OPERACIONAL']);
+            $table->text('description')->nullable();
             $table->integer('ali_data_type_amount')->default(0);
             $table->integer('ali_register_type_amount')->default(0);
             $table->string('ali_justify')->nullable();
@@ -46,6 +47,6 @@ class CreateRequirementsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('requirements');
+        Schema::dropIfExists('tasks');
     }
 }

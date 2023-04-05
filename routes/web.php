@@ -30,13 +30,13 @@ Route::middleware(['auth'])->group(function () {
 
 	Route::resource('projects', 'ProjectController');
 
-	Route::resource('requirements', 'RequirementController');
+	Route::resource('tasks', 'TaskController');
 
-	Route::get('requirements/create/{requirement}', 'RequirementController@create')->name('requirements.create');
+	Route::get('tasks/create/{task}', 'TaskController@create')->name('tasks.create');
 
-	Route::get('requirements/{requirement}/editFunctionPoint', 'RequirementController@editFunctionPoint')->name('requirements.editFunctionPoint');
+	Route::get('tasks/{task}/editFunctionPoint', 'TaskController@editFunctionPoint')->name('tasks.editFunctionPoint');
 
-	Route::put('requirements/fp/{requirement}', 'RequirementController@updateFunctionPoint')->name('requirements.updateFunctionPoint');
+	Route::put('tasks/fp/{task}', 'TaskController@updateFunctionPoint')->name('tasks.updateFunctionPoint');
 
 	Route::post('export', 'PdfviewController@index')->name('export');
 

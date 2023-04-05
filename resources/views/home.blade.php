@@ -197,12 +197,12 @@
 					<i class="fa fa-paste"></i>
 				</div>
 				<div class="dbox__body">
-					<span class="dbox__count">{{ $requirements->count() ?? 0 }}</span>
-					<span class="dbox__title">Requisitos detalhados</span>
+					<span class="dbox__count">{{ $tasks->count() ?? 0 }}</span>
+					<span class="dbox__title">Tarefas detalhados</span>
 				</div>
 				
 				<div class="dbox__action">
-					<a href="{{ route('requirements.index') }}"><button class="dbox__action__btn"><i class="fa fa-plus"></i></button></a>
+					<a href="{{ route('tasks.index') }}"><button class="dbox__action__btn"><i class="fa fa-plus"></i></button></a>
 				</div>				
 			</div>
 		</div>
@@ -212,7 +212,7 @@
 					<i class="fa fa-dollar"></i>
 				</div>
 				<div class="dbox__body">
-					<span class="dbox__count">{{ $requirements->sum('fp_total_amount') ?? 0 }}</span>
+					<span class="dbox__count">{{ $tasks->sum('fp_total_amount') ?? 0 }}</span>
 					<span class="dbox__title">Pontos de Função analisados</span>
 				</div>
 				

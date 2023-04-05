@@ -33,25 +33,6 @@
                             </div>
                         </div>
 
-                        <div class="form-group row">
-                            <label for="tipo" class="col-md-4 col-form-label text-md-right">{{ __('Tipo') }}</label>
-
-                            <div class="col-md-6">
-                                <select class="form-control @error('type') is-invalid @enderror" name="type">
-                                    <option value="">selecione...</option>
-                                    <option value="DESENVOLVIMENTO" {{ old('type') == 'DESENVOLVIMENTO' ? 'selected' : '' }}>DESENVOLVIMENTO</option>
-                                    <option value="MELHORIA" {{ old('type') == 'MELHORIA' ? 'selected' : '' }}>MELHORIA</option>
-                                    <option value="APLICAÇÃO" {{ old('type') == 'APLICAÇÃO' ? 'selected' : '' }}>APLICAÇÃO</option>
-                                </select>    
-
-                                @error('type')
-                                    <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $message }}</strong>
-                                    </span>
-                                @enderror
-                            </div>
-                        </div>
-
                         <div class="form-group row mb-0">
                             <div class="col-md-6 offset-md-4">
                                 <button type="submit" class="btn btn-primary">

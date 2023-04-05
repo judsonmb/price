@@ -19,13 +19,12 @@ class ProjectService
 
     public function getUserProjectsList(int $userId)
     {
-        return $this->model->with('requirement')->where('user_id', $userId)->orderby('created_at')->paginate(20);
+        return $this->model->with('task')->where('user_id', $userId)->orderby('created_at')->paginate(20);
     }
 
     public function storeProject(array $data)
     {
         $this->model->name = $data['name'];
-        $this->model->type = $data['type'];
         $this->model->user_id = Auth::user()->id;
         return $this->model->save();
     }
@@ -39,7 +38,6 @@ class ProjectService
     {
         $project = $this->model->find($id);
         $project->name = $data['name'];
-        $project->type = $data['type'];
         return $project->save();
     }
 

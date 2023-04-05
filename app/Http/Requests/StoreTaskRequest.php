@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class UpdateRequirementRequest extends FormRequest
+class StoreTaskRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -25,13 +25,8 @@ class UpdateRequirementRequest extends FormRequest
     {
         return [
             'name' => 'required|max:255',
-            'description' => 'required',
+            'type' => 'required|in:BUG,AJUSTE,FEATURE,OPERACIONAL',
             'project_id' => 'required|exists:projects,id',
-            'ali_justify' => 'max:255',
-            'aie_justify' => 'max:255',
-            'ee_justify' => 'max:255',
-            'se_justify' => 'max:255',
-            'ce_justify' => 'max:255',
         ];
     }
 }

@@ -3,36 +3,33 @@
 @section('content')
 <div class="container">
     <div class="row justify-content-center">
-        <div class="col-md-12">
+       <div class="col-md-12">
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item"><a href="/home">Home</a></li>
-                    <li class="breadcrumb-item"><a href="{{ route('requirements.index') }}">Requisitos</a></li>
-                    <li class="breadcrumb-item active" aria-current="page">Novo</li>
+                    <li class="breadcrumb-item"><a href="{{ route('tasks.index') }}">Tarefas</a></li>
+                    <li class="breadcrumb-item"><a href="{{ route('tasks.index') }}" title="{{ $task->name }}">{{ substr($task->name , 0, 10)}}...</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Editar</li>
                 </ol>
             </nav>
             <div class="card">
                 <div class="card-header">
-                    Crie um novo requisito
+                    Edite o tarefa <strong>{{ $task->name }}</strong>
                 </div>
                 <div class="card-body">
-                    <form method="POST" action="{{ route('requirements.store') }}">
+                    <form method="POST" action="{{ route('tasks.update', $task->id) }}">
                         @csrf
-
+                        @method('PUT')
                          <div class="form-group row">
                             <label for="tipo" class="col-md-4 col-form-label text-md-right">{{ __('Projeto') }}</label>
 
                             <div class="col-md-6">
                                 <select class="form-control @error('project_id') is-invalid @enderror" name="project_id">
-                                    @if($projects instanceof \Illuminate\Database\Eloquent\Collection)
-                                        <option value="">selecione...</option>
-                                        @foreach($projects as $p)
-                                            <option value="{{ $p->id }}" {{ (old('project_id')==$p->id || $projects->count()==1 ) ? 'selected' : '' }}>{{ $p->name }}</option>
-                                        @endforeach
-                                    @else
-                                        <option value="{{ $projects->id }}">{{ $projects->name }}</option>
-                                    @endif
+                                    @foreach($projects as $p)
+                                        <option value="{{ $p->id }}" {{ (old('project_id') or $task->project->id==$p->id) ? 'selected' : '' }}>{{ $p->name }}</option>
+                                    @endforeach
                                 </select>    
+
                                 @error('project_id')
                                     <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>
@@ -46,7 +43,7 @@
                             <label for="name" class="col-md-4 col-form-label text-md-right">{{ __('Nome') }}</label>
 
                             <div class="col-md-6">
-                                <input id="name" type="text" class="form-control @error('name') is-invalid @enderror" name="name" value="{{ old('name') }}" required autocomplete="name" autofocus>
+                                <input id="name" type="text" class="form-control @error('name') is-invalid @enderror" name="name" value="{{ old('name') ?? $task->name }}" required autocomplete="name" autofocus>
 
                                 @error('name')
                                     <span class="invalid-feedback" role="alert">
@@ -60,7 +57,7 @@
                             <label for="name" class="col-md-4 col-form-label text-md-right">{{ __('Descrição') }}</label>
 
                             <div class="col-md-6">
-                                <textarea id="custom-toolbar-menu-button" class="form-control @error('description') is-invalid @enderror" rows='10' name="description">{{ old('description') }}</textarea>
+                                <textarea id="custom-toolbar-menu-button" class="form-control @error('name') is-invalid @enderror" rows='10' name="description">{{ old('description') ?? $task->description }}</textarea>
 
                                 @error('description')
                                     <span class="invalid-feedback" role="alert">
@@ -73,9 +70,9 @@
                         <div class="form-group row mb-0">
                             <div class="col-md-6 offset-md-4">
                                 <button type="submit" class="btn btn-primary">
-                                    {{ __('Criar') }}
+                                    {{ __('Editar') }}
                                 </button>
-                                 <a href="{{ route('requirements.index') }}">
+                                <a href="{{ route('projects.index') }}">
                                     <button type="button" class="btn btn-secondary">
                                         {{ __('Voltar') }}
                                     </button>
